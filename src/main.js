@@ -183,7 +183,7 @@ function showVictory() {
 /* ---------- HUD ---------- */
 function buildHud() {
   const p = me(); if (!p) return; const F = FORMS[p.form];
-  $('h-form').textContent = F.name; $('h-tier').textContent = `Nivel ${F.tier} de la cadena`;
+  $('h-form').textContent = F.name; $('h-tier').textContent = `Nivel ${F.tier}`; $('h-tier').title = `Nivel ${F.tier} de la cadena alimenticia`;
   $('t-mult').textContent = F.verb; $('m-en').hidden = p.form !== 'pezCon';
   $('btn-evo').hidden = !F.next;
   $('t-ab').innerHTML = `${esc(F.abilityName)}<small>Espacio</small>`;

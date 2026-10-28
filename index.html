@@ -135,7 +135,10 @@ button:focus-visible{outline:2px solid var(--lum);outline-offset:2px}
   .legend{display:none}
   .actions{left:calc(12px + var(--sal));transform:none;bottom:calc(14px + var(--sab));flex-direction:column}
   .act{min-width:118px;font-size:.84rem}
-  .ability{width:78px;height:78px}
+  .ability{width:78px;height:78px;font-size:.68rem}
+  .wide{display:none}
+  .hbtn{font-size:.8rem;padding:.4em .8em}
+  .formname b{font-size:1.1rem}
   .tree-meter .track{width:84px}
   .pc,.lt-row{grid-template-columns:1fr}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -157,7 +160,7 @@ button:focus-visible{outline:2px solid var(--lum);outline-offset:2px}
     <div class="meter en" id="m-en" hidden><span>Energía</span><div class="track"><i id="b-en"></i></div><span class="val" id="t-en"></span></div>
   </div>
   <div class="tr">
-    <div class="row"><button class="hbtn" id="btn-tree" type="button">Árbol de la vida</button><button class="hbtn" id="btn-pause" type="button">Pausa</button></div>
+    <div class="row"><button class="hbtn" id="btn-tree" type="button">Árbol<span class="wide"> de la vida</span></button><button class="hbtn" id="btn-pause" type="button">Pausa</button></div>
     <div class="tree-meter"><span>El Árbol se agita</span><div class="track"><i id="b-ira"></i></div></div>
     <div class="eggs" id="h-eggs"></div>
   </div>
