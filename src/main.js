@@ -80,7 +80,7 @@ function doEvolve() {
   closeDyn(); buildHud();
   toast(`Ahora eres: ${N.name}`, 'good');
   if (lostEggs) setTimeout(() => toast('Tus huevos anteriores eclosionaron y siguen su propio camino', ''), 900);
-  if (firstTime) setTimeout(() => toast(N.hint, 'dna'), 1800);
+  if (firstTime) setTimeout(() => { const q = me(); if (q && q.form === next && G.mode === 'play') toast(N.hint, 'dna'); }, 1800);
 }
 function doMultiply() { if (G.mode === 'play' && !G.paused) INP.multiply = true; }
 function respawn() {

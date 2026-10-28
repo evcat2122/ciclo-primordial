@@ -251,7 +251,7 @@ export class World {
       let best = null, bd = det * det;
       for (const id in this.players) {
         const p = this.players[id]; if (!this.detectable(p) || (e.ai === 'vortex' && !(e.aggro > 0))) continue;
-        if (p.tier < e.tier || (p.tier === e.tier && e.ai === 'hunter') || e.aggro > 0) { const d = dist2(p.x, p.y, e.x, e.y) * 0.7; if (d < bd) { bd = d; best = p; } }
+        if (p.tier < e.tier || (p.tier === e.tier && e.ai === 'hunter' && e.r > p.r * 1.05) || e.aggro > 0) { const d = dist2(p.x, p.y, e.x, e.y) * 0.7; if (d < bd) { bd = d; best = p; } }
       }
       if (e.ai !== 'boss') {
         for (const o of this.ents) { if (o === e || o.dead || o.sp === e.sp || o.tier >= e.tier) continue; const d = dist2(o.x, o.y, e.x, e.y); if (d < bd) { bd = d; best = o; } }
@@ -296,7 +296,7 @@ export class World {
     }
     if (e.ai === 'hunter' && e.mode === 'chase' && valid) {
       e.lungeCd -= dt;
-      if (e.lungeT > 0) { e.lungeT -= dt; spd *= 2.1; }
+      if (e.lungeT > 0) { e.lungeT -= dt; spd *= 1.75; }
       else if (e.lungeCd <= 0 && dist2(tg.x, tg.y, e.x, e.y) < (e.r * 3 + (tg.r || 10) * 3 + 40) ** 2) { e.lungeT = 0.45; e.lungeCd = rand(2.5, 4); }
     }
     if (e.slowT > 0) spd *= 0.5;
@@ -449,7 +449,17 @@ export class World {
     this.mT = (this.mT || 0) - dt; if (this.mT > 0) return; this.mT = 0.5;
     const Z = this.zone.Z;
     let tries = 0; while (this.food.length < Z.food && tries++ < 20) this.spawnFood();
-    const n = this.ents.filter(e => !e.boss).length;
-    for (let k = 0; k < 2 && n + k < Z.pop; k++) this.spawnEnt(null, 700 * scaleOf(this.zone.id));
+    // mantener las proporciones de cada especie: rellenar la que más falta
+    const zid = this.zone.id, ids = SPECIES_IDS.filter(id => SPECIES[id].zone === zid && SPECIES[id].w > 0);
+    const totW = ids.reduce((a, id) => a + SPECIES[id].w, 0), cnt = {};
+    for (const e of this.ents) if (!e.boss) cnt[e.sp] = (cnt[e.sp] || 0) + 1;
+    let n = this.ents.filter(e => !e.boss).length;
+    for (let k = 0; k < 2 && n < Z.pop; k++, n++) {
+      let best = null, bd = -1e9;
+      for (const id of ids) { const def = Z.pop * SPECIES[id].w / totW - (cnt[id] || 0); if (def > bd) { bd = def; best = id; } }
+      this.spawnEnt(best, 700 * scaleOf(zid)); cnt[best] = (cnt[best] || 0) + 1;
+    }
+    // si sobran depredadores, el más lejano se va
+    for (const id of ids) { const max = Math.ceil(Z.pop * SPECIES[id].w / totW * 1.4) + 1; if ((cnt[id] || 0) > max) { const ps = Object.values(this.players); const far = this.ents.filter(e => e.sp === id && ps.every(p => dist2(p.x, p.y, e.x, e.y) > 900 ** 2)); if (far.length) far[0].dead = true; } }
   }
 }
