@@ -218,8 +218,8 @@ function handleEvents() {
       case 'shaken': toast('Te sacudió y te soltaste', 'warn'); break;
       case 'noLatch': toast('Acércate más a algo de tu tamaño o más grande', 'warn'); Snd.play('deny'); break;
       case 'noEnergy': toast('Sin energía: espera a que se recargue', 'warn'); Snd.play('deny'); break;
-      case 'egg': if (mine) { Snd.play('egg'); hintOnce('egg', 'Si mueres, renaces en tu huevo. Escóndelo bien: los cazadores se lo comen', 'good'); } break;
-      case 'eggLost': if (ev.pid === ME) { Snd.play('eggLost'); toast('Perdiste uno de tus huevos', 'danger'); } break;
+      case 'egg': if (mine) { Snd.play('egg'); hintOnce('egg', 'Huevo enterrado: los depredadores no lo encuentran. Si mueres, renaces aquí. Solo una raíz del Árbol puede aplastarlo', 'good'); } break;
+      case 'eggLost': if (ev.pid === ME) { Snd.play('eggLost'); toast('Una raíz del Árbol aplastó uno de tus huevos', 'danger'); } break;
       case 'eggFull': toast(`Ya tienes ${MAX_EGGS} huevos`, 'warn'); Snd.play('deny'); break;
       case 'noAdn': toast(`Necesitas ${ev.need} ADN`, 'warn'); Snd.play('deny'); break;
       case 'strikeWarn': Snd.play('warn'); hintOnce('strike', '¡Una raíz del Árbol va a golpear! Sal del círculo ámbar', 'sap'); break;

@@ -154,9 +154,13 @@ export class Renderer {
     for (const g of world.eggs) {
       if (!this.visible(g.x, g.y, 30)) continue;
       const col = FORMS[g.form].color;
+      c.fillStyle = 'rgba(70,48,30,0.75)'; c.beginPath(); c.ellipse(g.x, g.y, g.r * 2, g.r * 1.6, 0, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = 'rgba(160,120,80,0.5)'; c.lineWidth = Math.max(1, g.r * 0.1); c.stroke();
+      c.globalAlpha = 0.6;
       for (let i = 0; i < 3; i++) { const a = i * 2.1 + g.seed, x = g.x + Math.cos(a) * g.r * 0.6, y = g.y + Math.sin(a) * g.r * 0.6, rr = g.r * 0.7 * (1 + 0.05 * Math.sin(this.t * 2 + i));
         c.fillStyle = rgba('#fff7dc', 0.25); c.beginPath(); c.arc(x, y, rr, 0, TAU); c.fill(); c.strokeStyle = rgba(col, 0.7); c.lineWidth = Math.max(1, g.r * 0.08); c.stroke();
         c.fillStyle = rgba(col, 0.9); c.beginPath(); c.arc(x + rr * 0.15, y, rr * 0.3, 0, TAU); c.fill(); }
+      c.globalAlpha = 1;
     }
   }
   drawStrikes(c, world, top) {

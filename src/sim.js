@@ -255,7 +255,6 @@ export class World {
       }
       if (e.ai !== 'boss') {
         for (const o of this.ents) { if (o === e || o.dead || o.sp === e.sp || o.tier >= e.tier) continue; const d = dist2(o.x, o.y, e.x, e.y); if (d < bd) { bd = d; best = o; } }
-        for (const g of this.eggs) { const d = dist2(g.x, g.y, e.x, e.y); if (d < 140 * 140 && d < bd) { bd = d; best = g; } }
       }
       if (best) { e.mode = 'chase'; e.tgt = best; return; }
     }
@@ -414,10 +413,6 @@ export class World {
   updateEggs(dt) {
     for (const g of this.eggs) {
       g.t += dt;
-      for (const e of this.ents) {
-        if (e.dead || e.tier < 1 || !(e.ai === 'hunter' || e.ai === 'vortex')) continue;
-        if (dist2(e.x, e.y, g.x, g.y) < (e.r + g.r) ** 2) { g.hp -= SPECIES[e.sp].bite * dt * 2; if (g.hp <= 0) { g.dead = true; this.events.push({ type: 'eggLost', x: g.x, y: g.y, pid: g.owner }); break; } }
-      }
     }
     this.eggs = this.eggs.filter(g => !g.dead);
   }
