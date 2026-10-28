@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Ciclo Primordial</title>
+<meta name="description" content="De ameba a lo que te atrevas. Bajo el Árbol, todo lo que muere renace: comer o ser comido.">
+<meta name="theme-color" content="#030406">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,800&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+/* Concepto: una caverna bajo un árbol inmenso. Todo brilla con luz propia: el verde azulado de la vida,
+   el ámbar de la savia del Árbol. Los paneles son placas de roca húmeda con un hilo de luz. */
+:root{
+  --ink:#030406; --panel:rgba(9,14,18,.9); --panel-hi:rgba(16,24,30,.94); --line:rgba(120,240,220,.16); --line-hi:rgba(120,240,220,.34);
+  --fg:#e9f1ef; --dim:#91a6aa; --lum:#3ff2d0; --sap:#ffb067; --dna:#ff7ac8; --prey:#8cff7a; --peer:#ffd166; --pred:#ff4f6d;
+  --f-disp:"Fraunces",Georgia,"Times New Roman",serif; --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px); --sar:env(safe-area-inset-right,0px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--ink);color:var(--fg);font-family:var(--f-body);-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--lum);outline-offset:2px}
+.btn{font-family:var(--f-body);font-weight:700;font-size:1rem;padding:.7em 1.4em;border-radius:999px;border:1px solid var(--line-hi);background:rgba(255,255,255,.04);transition:transform .12s,background .12s,border-color .12s}
+.btn:hover{background:rgba(255,255,255,.09);border-color:var(--fg)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--lum);border-color:var(--lum);color:#032420}
+.btn.primary:hover{background:#7ff8e2}
+.btn.ghost{border-color:transparent;color:var(--dim)}
+.btn.danger{border-color:rgba(255,79,109,.5);color:#ff9aab}
+
+/* HUD */
+#hud{position:fixed;inset:0;pointer-events:none;z-index:5}
+#hud button{pointer-events:auto}
+.tl{position:absolute;top:calc(12px + var(--sat));left:calc(14px + var(--sal));display:grid;gap:6px;width:min(300px,58vw)}
+.formname{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.formname b{font-family:var(--f-disp);font-weight:600;font-size:1.25rem;line-height:1;text-shadow:0 2px 8px #000}
+.chip{font-family:var(--f-mono);font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2em .55em;border-radius:6px;background:rgba(0,0,0,.5);border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+.meter{display:grid;grid-template-columns:4.8em 1fr auto;align-items:center;gap:6px;font-family:var(--f-mono);font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;color:var(--dim)}
+.meter .track{height:8px;border-radius:5px;background:rgba(0,0,0,.55);border:1px solid var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:100%;transform-origin:left;border-radius:4px;transition:transform .15s linear}
+.meter .val{font-variant-numeric:tabular-nums;color:var(--fg);min-width:5.4em;text-align:right}
+.meter.hp i{background:var(--prey)} .meter.adn i{background:var(--dna)} .meter.en i{background:var(--peer)}
+.tr{position:absolute;top:calc(12px + var(--sat));right:calc(14px + var(--sar));display:grid;gap:8px;justify-items:end}
+.tr .row{display:flex;gap:6px;align-items:center}
+.hbtn{font-weight:700;font-size:.88rem;padding:.45em 1em;border-radius:999px;border:1px solid var(--line-hi);background:rgba(3,4,6,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.tree-meter{display:grid;gap:3px;justify-items:end;font-family:var(--f-mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--sap)}
+.tree-meter .track{width:120px;height:6px;border-radius:4px;background:rgba(0,0,0,.55);border:1px solid rgba(255,176,103,.3);overflow:hidden}
+.tree-meter i{display:block;height:100%;background:var(--sap);transform-origin:left}
+.eggs{display:flex;gap:4px;align-items:center;font-family:var(--f-mono);font-size:.62rem;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.eggs span{width:12px;height:15px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;border:1.5px solid rgba(255,232,168,.5)}
+.eggs span.on{background:#ffe8a8;border-color:#ffe8a8;box-shadow:0 0 8px rgba(255,232,168,.6)}
+.legend{position:absolute;left:calc(14px + var(--sal));bottom:calc(14px + var(--sab));display:flex;gap:10px;font-size:.72rem;color:var(--dim);background:rgba(0,0,0,.45);padding:.35em .7em;border-radius:999px;border:1px solid var(--line)}
+.legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.actions{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(14px + var(--sab));display:flex;gap:8px}
+.act{display:grid;justify-items:center;gap:1px;min-width:120px;padding:.55em 1em .5em;border-radius:14px;border:1.5px solid var(--line-hi);background:rgba(3,4,6,.7);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-weight:700;font-size:.92rem;line-height:1.1}
+.act small{font-family:var(--f-mono);font-size:.62rem;font-weight:500;color:var(--dim)}
+.act.ready{border-color:var(--dna);box-shadow:0 0 18px rgba(255,122,200,.35)}
+.act.ready small{color:var(--dna)}
+.act.evo.ready{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 28px rgba(255,122,200,.6)}}
+.ability{position:absolute;right:calc(18px + var(--sar));bottom:calc(16px + var(--sab));width:84px;height:84px;border-radius:50%;border:2px solid var(--line-hi);background:rgba(3,4,6,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;text-align:center;font-weight:700;font-size:.78rem;line-height:1.05;overflow:hidden;touch-action:none}
+.ability::before{content:"";position:absolute;inset:0;background:conic-gradient(rgba(0,0,0,.65) var(--cd,0deg),transparent 0)}
+.ability span{position:relative}
+.ability small{display:block;font-family:var(--f-mono);font-size:.58rem;font-weight:500;color:var(--dim);margin-top:3px}
+.ability.ready{border-color:var(--lum);box-shadow:0 0 16px rgba(63,242,208,.35)}
+.ability.on{background:rgba(255,176,103,.25);border-color:var(--sap)}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(84px + var(--sat));z-index:8;display:grid;gap:6px;justify-items:center;pointer-events:none;width:min(460px,calc(100vw - 32px))}
+.toast{font-weight:700;font-size:.9rem;padding:.55em 1em;border-radius:12px;background:rgba(6,10,14,.9);border:1px solid var(--line-hi);border-left:4px solid var(--lum);animation:tin .25s ease-out;text-align:center}
+.toast.warn{border-left-color:var(--peer)} .toast.danger{border-left-color:var(--pred)} .toast.sap{border-left-color:var(--sap)} .toast.good{border-left-color:var(--prey)} .toast.dna{border-left-color:var(--dna)}
+.toast.out{opacity:0;transform:translateY(-6px);transition:opacity .3s,transform .3s}
+@keyframes tin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* Pantallas */
+.ov{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;overflow-y:auto;overscroll-behavior:contain;background:rgba(2,3,5,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:calc(16px + var(--sat)) max(16px,var(--sar)) calc(16px + var(--sab)) max(16px,var(--sal))}
+.sheet{flex:0 0 auto;margin-block:auto;width:min(620px,100%);background:var(--panel);border:1px solid var(--line-hi);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.6);overflow:clip;animation:sin .25s ease-out}
+.sheet.wide{width:min(820px,100%)}
+@keyframes sin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.shead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:calc(-16px - var(--sat));background:#0a1216;z-index:2;border-radius:18px 18px 0 0}
+.shead h2{flex:1;margin:0;font-family:var(--f-disp);font-weight:600;font-size:1.45rem;line-height:1.1;text-wrap:balance}
+.shead .x{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:none;font-size:1.3rem;color:var(--dim)}
+.sbody{padding:18px;display:grid;gap:14px}
+.sbody p{margin:0;line-height:1.55;color:var(--dim)}
+.sbody p strong{color:var(--fg)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row.end{justify-content:flex-end}
+.menu{background:radial-gradient(ellipse at 50% 40%,rgba(2,3,5,.1),rgba(2,3,5,.85));backdrop-filter:none;-webkit-backdrop-filter:none}
+.menu-in{margin-block:auto;display:grid;gap:18px;justify-items:center;text-align:center;max-width:560px}
+.kicker{margin:0;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sap)}
+.title{margin:0;font-family:var(--f-disp);font-style:italic;font-weight:800;font-size:clamp(3rem,13vw,6.4rem);line-height:.86;letter-spacing:-.02em;text-wrap:balance;text-shadow:0 0 50px rgba(63,242,208,.25)}
+.title em{color:var(--lum);font-style:italic}
+.sub{margin:0;font-size:1.08rem;line-height:1.5;color:var(--dim);max-width:32em}
+.mbtns{display:grid;gap:10px;width:min(300px,100%)}
+.meta{margin:0;font-family:var(--f-mono);font-size:.72rem;color:var(--dim)}
+.story{font-family:var(--f-disp);font-size:1.2rem;line-height:1.5;color:var(--fg)}
+.story em{color:var(--sap);font-style:italic}
+.chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.chain div{padding:10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.85rem;color:var(--dim);display:grid;gap:4px}
+.chain b{font-size:.95rem}
+.chain .g b{color:var(--prey)} .chain .y b{color:var(--peer)} .chain .r b{color:var(--pred)}
+
+/* Árbol de la vida */
+.lifetree{display:grid;gap:10px}
+.lt-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.node{position:relative;display:grid;gap:3px;padding:12px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);text-align:left}
+.node b{font-family:var(--f-disp);font-weight:600;font-size:1.1rem}
+.node small{font-family:var(--f-mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.node.cur{border-color:var(--lum);box-shadow:0 0 0 1px var(--lum) inset}
+.node.next{border-color:var(--dna)}
+.node.mem small{color:var(--peer)}
+.node.lock{opacity:.45;border-style:dashed}
+.trunk{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.branch-h{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:6px 0 0}
+.card{display:grid;gap:10px;padding:16px;border-radius:16px;background:var(--panel-hi);border:1px solid var(--line-hi)}
+.card h3{margin:0;font-family:var(--f-disp);font-weight:600;font-size:1.5rem}
+.pc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pc div{padding:10px;border-radius:12px;background:rgba(0,0,0,.3);font-size:.92rem;line-height:1.4}
+.pc .pro{border-left:3px solid var(--prey)} .pc .con{border-left:3px solid var(--pred)}
+.pc small{display:block;font-family:var(--f-mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.cost{font-family:var(--f-mono);font-size:.8rem;color:var(--dna)}
+.cost s{color:var(--dim)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.stat{padding:10px;border-radius:12px;background:rgba(0,0,0,.3);border:1px solid var(--line);display:grid;gap:2px}
+.stat b{font-family:var(--f-mono);font-size:1.1rem;font-variant-numeric:tabular-nums}
+.stat small{font-family:var(--f-mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+
+@media (max-width:600px){
+  .tl{width:min(230px,58vw)}
+  .meter{grid-template-columns:4em 1fr;font-size:.58rem}
+  .meter .val{display:none}
+  .legend{display:none}
+  .actions{left:calc(12px + var(--sal));transform:none;bottom:calc(14px + var(--sab));flex-direction:column}
+  .act{min-width:118px;font-size:.84rem}
+  .ability{width:78px;height:78px}
+  .tree-meter .track{width:84px}
+  .pc,.lt-row{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chain{grid-template-columns:1fr}
+  #toasts{top:calc(110px + var(--sat))}
+  .toast{font-size:.8rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="cv" aria-label="La caverna"></canvas>
+
+<div id="hud" hidden>
+  <div class="tl">
+    <div class="formname"><b id="h-form">Ameba</b><span class="chip" id="h-tier">Nivel 1</span></div>
+    <div class="meter hp"><span>Vida</span><div class="track"><i id="b-hp"></i></div><span class="val" id="t-hp"></span></div>
+    <div class="meter adn"><span>ADN</span><div class="track"><i id="b-adn"></i></div><span class="val" id="t-adn"></span></div>
+    <div class="meter en" id="m-en" hidden><span>Energía</span><div class="track"><i id="b-en"></i></div><span class="val" id="t-en"></span></div>
+  </div>
+  <div class="tr">
+    <div class="row"><button class="hbtn" id="btn-tree" type="button">Árbol de la vida</button><button class="hbtn" id="btn-pause" type="button">Pausa</button></div>
+    <div class="tree-meter"><span>El Árbol se agita</span><div class="track"><i id="b-ira"></i></div></div>
+    <div class="eggs" id="h-eggs"></div>
+  </div>
+  <div class="legend" aria-label="Colores de la cadena alimenticia"><span><b style="background:var(--prey)"></b>Presa</span><span><b style="background:var(--peer)"></b>Igual</span><span><b style="background:var(--pred)"></b>Depredador</span></div>
+  <div class="actions">
+    <button class="act" id="btn-mult" type="button"><span id="t-mult">Dividirte</span><small id="c-mult">18 ADN · tecla R</small></button>
+    <button class="act evo" id="btn-evo" type="button"><span>Evolucionar</span><small id="c-evo">70 ADN · tecla F</small></button>
+  </div>
+  <button class="ability" id="btn-ab" type="button"><span id="t-ab">Pseudópodo<small>Espacio</small></span></button>
+</div>
+<div id="toasts" aria-live="polite"></div>
+
+<div class="ov menu" id="ov-menu">
+  <div class="menu-in">
+    <p class="kicker">Capítulo 1 · La caverna bajo el Árbol</p>
+    <h1 class="title">Ciclo <em>Primordial</em></h1>
+    <p class="sub">Todo lo que muere bajo el Árbol renace en su caverna. Come o serás comido, evoluciona y encuentra la salida.</p>
+    <div class="mbtns">
+      <button class="btn primary" id="m-cont" type="button" hidden>Continuar</button>
+      <button class="btn" id="m-new" type="button">Nueva partida</button>
+      <button class="btn ghost" id="m-sound" type="button">Sonido: sí</button>
+    </div>
+    <p class="meta" id="m-meta"></p>
+  </div>
+</div>
+<div class="ov" id="ov-dyn" hidden><div class="sheet" id="dyn"></div></div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
